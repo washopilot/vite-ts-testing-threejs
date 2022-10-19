@@ -1,3 +1,4 @@
+import './style.css';
 import * as THREE from 'three';
 import Stats from 'stats.js';
 
@@ -13,8 +14,8 @@ init();
 render();
 
 function init() {
-    const container = document.createElement('div');
-    document.body.appendChild(container);
+    const container = document.getElementById('app');
+    // document.body.appendChild(container);
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.25, 20);
 
@@ -51,10 +52,10 @@ function init() {
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1;
     renderer.outputEncoding = THREE.sRGBEncoding;
-    container.appendChild(renderer.domElement);
+    container!.appendChild(renderer.domElement);
 
     stats = new Stats();
-    container.appendChild(stats.dom);
+    container!.appendChild(stats.dom);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     // controls.addEventListener('change', render); // use if there is no animation loop
@@ -80,7 +81,7 @@ function onWindowResize() {
 function render() {
     stats.update();
     renderer.render(scene, camera);
-    scene.getObjectByName(model.name)!.rotation.y += 0.005;
+    scene.getObjectByName(model.name)!.rotation.y += 0.001;
 
     requestAnimationFrame(render);
 }
