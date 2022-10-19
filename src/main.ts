@@ -1,10 +1,13 @@
 import * as THREE from 'three';
+import Stats from 'stats.js';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 
-let camera: THREE.PerspectiveCamera, scene: THREE.Scene, renderer: THREE.WebGLRenderer;
+let camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer, stats: Stats;
+let scene: THREE.Scene;
+let model = new THREE.Object3D();
 
 init();
 render();
@@ -33,7 +36,10 @@ function init() {
 
             const loader = new GLTFLoader().setPath('/src/assets/models/gltf/DamagedHelmet/glTF/');
             loader.load('DamagedHelmet.gltf', function (gltf) {
-                scene.add(gltf.scene);
+                model = gltf.scene;
+                model.name = 'model';
+
+                scene.add(model);
 
                 render();
             });
@@ -47,14 +53,17 @@ function init() {
     renderer.outputEncoding = THREE.sRGBEncoding;
     container.appendChild(renderer.domElement);
 
+    stats = new Stats();
+    container.appendChild(stats.dom);
+
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.addEventListener('change', render); // use if there is no animation loop
+    // controls.addEventListener('change', render); // use if there is no animation loop
     controls.minDistance = 2;
     controls.maxDistance = 10;
     controls.target.set(0, 0, -0.2);
     controls.update();
 
-    // console.log(controls);
+    // console.log(scene.getObjectByName(model.name));
 
     window.addEventListener('resize', onWindowResize);
 }
@@ -68,8 +77,10 @@ function onWindowResize() {
     render();
 }
 
-//
-
 function render() {
+    stats.update();
     renderer.render(scene, camera);
+    scene.getObjectByName(model.name)!.rotation.y += 0.005;
+
+    requestAnimationFrame(render);
 }
